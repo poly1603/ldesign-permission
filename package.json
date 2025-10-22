@@ -1,0 +1,30 @@
+{
+  "name": "@ldesign/permission",
+  "version": "0.1.0",
+  "description": "LDesign 权限管理系统 - RBAC/ABAC、路由权限、按钮权限",
+  "keywords": ["ldesign", "permission", "rbac", "abac", "authorization"],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "scripts": {
+    "build": "ldesign-builder build -f esm,cjs,dts",
+    "dev": "ldesign-builder watch",
+    "lint": "eslint . --fix"
+  },
+  "dependencies": {
+    "@ldesign/auth": "workspace:*",
+    "@ldesign/cache": "workspace:*",
+    "@ldesign/router": "workspace:*",
+    "@ldesign/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@ldesign/builder": "workspace:*",
+    "@antfu/eslint-config": "^6.0.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3"
+  }
+}
+
