@@ -2,16 +2,57 @@
   "name": "@ldesign/permission",
   "version": "0.1.0",
   "description": "LDesign 权限管理系统 - RBAC/ABAC、路由权限、按钮权限",
-  "keywords": ["ldesign", "permission", "rbac", "abac", "authorization"],
+  "keywords": [
+    "ldesign",
+    "permission",
+    "rbac",
+    "abac",
+    "authorization"
+  ],
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs"
+    },
+    "./core/*": {
+      "types": "./es/core/*.d.ts",
+      "import": "./es/core/*.js",
+      "require": "./lib/core/*.cjs"
+    },
+    "./types": {
+      "types": "./es/types/index.d.ts",
+      "import": "./es/types/index.js",
+      "require": "./lib/types/index.cjs"
+    },
+    "./types/*": {
+      "types": "./es/types/*.d.ts",
+      "import": "./es/types/*.js",
+      "require": "./lib/types/*.cjs"
+    }
+  },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
   "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "es",
+    "lib",
+    "dist"
+  ],
   "scripts": {
-    "build": "ldesign-builder build -f esm,cjs,dts",
-    "dev": "ldesign-builder watch",
+    "build": "ldesign-builder build",
+    "build:watch": "ldesign-builder build --watch",
+    "dev": "ldesign-builder build --mode development --watch",
+    "clean": "rimraf es lib dist coverage",
+    "prepublishOnly": "pnpm run clean && pnpm run build",
     "lint": "eslint . --fix"
   },
   "dependencies": {
@@ -27,9 +68,3 @@
     "typescript": "^5.7.3"
   }
 }
-
-
-
-
-
-
