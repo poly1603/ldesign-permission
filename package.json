@@ -1,7 +1,7 @@
 {
   "name": "@ldesign/permission",
-  "version": "0.1.0",
-  "description": "LDesign 权限管理系统 - RBAC/ABAC、路由权限、按钮权限",
+  "version": "0.2.0",
+  "description": "LDesign 企业级权限管理系统 - RBAC/ABAC/策略引擎/智能缓存/临时权限/性能监控",
   "keywords": [
     "ldesign",
     "permission",

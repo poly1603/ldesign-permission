@@ -11,6 +11,7 @@ import type {
   LogicalOperator,
   Context,
 } from '../../types'
+import { getValueByPath } from '../../shared/utils'
 
 /**
  * 条件求值器类
@@ -131,23 +132,6 @@ export class ConditionEvaluator {
     }
   }
 
-  /**
-   * 通过路径获取对象值
-   * 支持嵌套路径，如 "user.profile.age"
-   */
-  private getValueByPath(obj: any, path: string): any {
-    const keys = path.split('.')
-    let value = obj
-
-    for (const key of keys) {
-      if (value === null || value === undefined) {
-        return undefined
-      }
-      value = value[key]
-    }
-
-    return value
-  }
 
   /**
    * 检查是否为逻辑运算符

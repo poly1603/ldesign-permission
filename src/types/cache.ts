@@ -1,166 +1,109 @@
 /**
  * @ldesign/permission - 缓存类型定义
  * 
- * 权限缓存相关类型
+ * 定义权限缓存系统的相关类型
  */
 
-/**
- * 缓存键类型
- */
-export type CacheKey = string
+import type { CheckResult } from './core'
 
 /**
- * 缓存值类型
+ * 缓存节点
  */
-export type CacheValue = any
-
-/**
- * 缓存条目
- */
-export interface CacheEntry<T = CacheValue> {
+export interface CacheNode<K, V> {
   /** 键 */
-  key: CacheKey
+  key: K
   /** 值 */
-  value: T
-  /** 过期时间戳 */
-  expiresAt?: number
+  value: V
   /** 创建时间戳 */
-  createdAt: number
-  /** 最后访问时间戳 */
-  lastAccessedAt: number
-  /** 访问次数 */
-  hitCount: number
-  /** 权重（用于缓存策略） */
-  weight?: number
-}
-
-/**
- * 缓存策略类型
- */
-export enum CacheStrategy {
-  /** LRU（最近最少使用） */
-  LRU = 'lru',
-  /** LFU（最不经常使用） */
-  LFU = 'lfu',
-  /** FIFO（先进先出） */
-  FIFO = 'fifo',
-  /** TTL（基于时间） */
-  TTL = 'ttl',
+  timestamp: number
+  /** 前一个节点 */
+  prev: CacheNode<K, V> | null
+  /** 后一个节点 */
+  next: CacheNode<K, V> | null
 }
 
 /**
  * 缓存配置
  */
 export interface CacheConfig {
-  /** 缓存策略 */
-  strategy?: CacheStrategy
-  /** 最大缓存条目数 */
+  /** 最大缓存数量 */
   maxSize?: number
-  /** 默认TTL（毫秒） */
+  /** 缓存过期时间（毫秒） */
   ttl?: number
-  /** 是否启用统计 */
-  enableStats?: boolean
-  /** 是否启用压缩 */
-  enableCompression?: boolean
+  /** 是否启用缓存 */
+  enabled?: boolean
 }
 
 /**
- * 缓存统计
+ * 缓存统计信息
  */
 export interface CacheStats {
-  /** 缓存命中次数 */
-  hits: number
-  /** 缓存未命中次数 */
-  misses: number
-  /** 命中率 */
-  hitRate: number
-  /** 当前缓存条目数 */
+  /** 总大小 */
   size: number
-  /** 最大缓存条目数 */
+  /** 最大大小 */
   maxSize: number
-  /** 驱逐次数 */
+  /** 命中次数 */
+  hits: number
+  /** 未命中次数 */
+  misses: number
+  /** 命中率（百分比） */
+  hitRate: number
+  /** 过期清理次数 */
   evictions: number
-  /** 过期次数 */
-  expirations: number
 }
 
 /**
- * 缓存键构建器配置
+ * LRU 缓存接口
  */
-export interface CacheKeyBuilderConfig {
-  /** 键前缀 */
-  prefix?: string
-  /** 键分隔符 */
-  separator?: string
-  /** 是否包含时间戳 */
-  includeTimestamp?: boolean
+export interface ILRUCache<K, V> {
+  /** 获取缓存值 */
+  get(key: K): V | undefined
+  /** 设置缓存值 */
+  set(key: K, value: V): void
+  /** 删除缓存 */
+  delete(key: K): boolean
+  /** 清空缓存 */
+  clear(): void
+  /** 是否存在 */
+  has(key: K): boolean
+  /** 获取缓存大小 */
+  size(): number
+  /** 获取统计信息 */
+  stats(): CacheStats
 }
 
 /**
- * 预加载策略
+ * 权限缓存键
  */
-export enum PreloadStrategy {
-  /** 预加载所有 */
-  ALL = 'all',
-  /** 预加载常用 */
-  COMMON = 'common',
-  /** 按需加载 */
-  ON_DEMAND = 'on-demand',
-  /** 智能预测 */
-  SMART = 'smart',
+export interface PermissionCacheKey {
+  /** 用户ID */
+  userId: string
+  /** 资源 */
+  resource: string
+  /** 操作 */
+  action: string
+  /** 上下文哈希（可选） */
+  contextHash?: string
 }
 
 /**
- * 预加载配置
+ * 权限缓存值
  */
-export interface PreloadConfig {
-  /** 预加载策略 */
-  strategy?: PreloadStrategy
-  /** 预加载项列表 */
-  items?: string[]
-  /** 预加载批次大小 */
-  batchSize?: number
-  /** 预加载延迟（毫秒） */
-  delay?: number
+export interface PermissionCacheValue {
+  /** 检查结果 */
+  result: CheckResult
+  /** 缓存时间 */
+  cachedAt: number
 }
 
 /**
- * 缓存事件类型
+ * 缓存操作选项
  */
-export enum CacheEventType {
-  /** 缓存设置 */
-  SET = 'set',
-  /** 缓存获取 */
-  GET = 'get',
-  /** 缓存删除 */
-  DELETE = 'delete',
-  /** 缓存清空 */
-  CLEAR = 'clear',
-  /** 缓存驱逐 */
-  EVICT = 'evict',
-  /** 缓存过期 */
-  EXPIRE = 'expire',
-  /** 缓存命中 */
-  HIT = 'hit',
-  /** 缓存未命中 */
-  MISS = 'miss',
+export interface CacheOptions {
+  /** 是否跳过缓存 */
+  skipCache?: boolean
+  /** 是否刷新缓存 */
+  refreshCache?: boolean
+  /** 自定义 TTL */
+  ttl?: number
 }
-
-/**
- * 缓存事件
- */
-export interface CacheEvent {
-  /** 事件类型 */
-  type: CacheEventType
-  /** 缓存键 */
-  key?: CacheKey
-  /** 缓存值 */
-  value?: CacheValue
-  /** 时间戳 */
-  timestamp: number
-  /** 元数据 */
-  metadata?: Record<string, any>
-}
-
-
-

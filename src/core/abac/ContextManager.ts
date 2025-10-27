@@ -5,6 +5,7 @@
  */
 
 import type { Context } from '../../types'
+import { getValueByPath } from '../../shared/utils'
 
 /**
  * 上下文管理器类
@@ -218,22 +219,6 @@ export class ContextManager {
     return attributes
   }
 
-  /**
-   * 通过路径获取值
-   */
-  private getValueByPath(obj: any, path: string): any {
-    const keys = path.split('.')
-    let value = obj
-
-    for (const key of keys) {
-      if (value === null || value === undefined) {
-        return undefined
-      }
-      value = value[key]
-    }
-
-    return value
-  }
 
   /**
    * 序列化上下文（用于日志记录）

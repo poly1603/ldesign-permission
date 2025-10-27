@@ -20,5 +20,8 @@ export * from './cache'
 // 审计类型
 export * from './audit'
 
+// 过期类型
+export * from './expiration'
+
 
 

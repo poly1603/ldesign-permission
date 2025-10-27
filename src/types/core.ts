@@ -78,6 +78,8 @@ export interface User {
 export interface CheckOptions {
   /** 是否使用缓存 */
   useCache?: boolean
+  /** 是否跳过缓存 */
+  skipCache?: boolean
   /** 缓存TTL（毫秒） */
   cacheTTL?: number
   /** 是否记录审计日志 */

@@ -1,7 +1,66 @@
 /**
  * @ldesign/permission - ABAC 引擎
  * 
- * 基于属性的访问控制核心引擎
+ * 基于属性的访问控制（Attribute-Based Access Control）核心引擎
+ * 
+ * ABAC 是一种更灵活的权限控制模型，通过评估用户、资源、环境等各种属性
+ * 来决定是否授予权限。相比 RBAC，ABAC 可以实现更细粒度的权限控制。
+ * 
+ * 核心概念：
+ * - 属性（Attribute）：用户、资源、环境等的特征（如用户的部门、资源的所有者）
+ * - 规则（Rule）：定义在什么条件下允许或拒绝访问
+ * - 条件（Condition）：规则的判断逻辑（如 user.department == 'IT'）
+ * - 上下文（Context）：包含所有相关属性的环境信息
+ * 
+ * 支持的特性：
+ * - ✅ 复杂条件表达式（and/or/not）
+ * - ✅ 多种比较运算符（eq/gt/lt/in/contains/matches 等）
+ * - ✅ 动态属性计算
+ * - ✅ 字段级权限控制
+ * - ✅ 规则优先级
+ * - ✅ 条件缓存优化
+ * 
+ * @example
+ * ```typescript
+ * const abac = new ABACEngine()
+ * 
+ * // 定义规则：用户只能编辑自己创建的文章
+ * abac.addRule({
+ *   action: 'update',
+ *   subject: 'Post',
+ *   conditions: {
+ *     field: 'authorId',
+ *     operator: 'eq',
+ *     value: '{{userId}}' // 动态值，从上下文中获取
+ *   }
+ * })
+ * 
+ * // 定义复杂规则：管理员或文章作者可以删除草稿
+ * abac.addRule({
+ *   action: 'delete',
+ *   subject: 'Post',
+ *   conditions: {
+ *     operator: 'or',
+ *     conditions: [
+ *       { field: 'user.role', operator: 'eq', value: 'admin' },
+ *       {
+ *         operator: 'and',
+ *         conditions: [
+ *           { field: 'post.authorId', operator: 'eq', value: '{{userId}}' },
+ *           { field: 'post.status', operator: 'eq', value: 'draft' }
+ *         ]
+ *       }
+ *     ]
+ *   }
+ * })
+ * 
+ * // 检查权限
+ * const context = {
+ *   user: { id: 'user123', role: 'editor' },
+ *   post: { authorId: 'user123', status: 'draft' }
+ * }
+ * abac.can('delete', { type: 'Post' }, context) // true
+ * ```
  */
 
 import type {
@@ -19,32 +78,91 @@ import { ContextManager } from './ContextManager'
 /**
  * ABAC 引擎类
  * 
+ * 这是 ABAC 系统的核心实现，提供基于属性的权限控制功能。
+ * 
  * 核心功能：
- * - 能力规则管理
- * - 条件求值
- * - 属性匹配
- * - 上下文处理
- * - 字段级权限
+ * - 能力规则管理（添加、删除、查询规则）
+ * - 条件求值（支持复杂的逻辑表达式）
+ * - 属性匹配（支持多种数据类型和运算符）
+ * - 上下文处理（构建和管理权限检查的上下文环境）
+ * - 字段级权限（控制对象字段的访问权限）
+ * 
+ * 架构设计：
+ * - ConditionEvaluator：负责条件表达式的求值
+ * - AttributeMatcher：负责属性的匹配和比较
+ * - ContextManager：负责上下文的构建和管理
+ * - ABACEngine：协调三者，提供统一的 API
+ * 
+ * 使用场景：
+ * - 数据所有者权限（用户只能操作自己的数据）
+ * - 部门权限（同部门用户可以查看彼此的数据）
+ * - 时间限制（只能在工作时间访问）
+ * - 地理位置限制（只能在特定地点访问）
+ * - 动态权限（根据资源状态决定权限）
+ * 
+ * @example
+ * ```typescript
+ * const abac = new ABACEngine({
+ *   enableConditionCache: true,  // 启用条件缓存
+ *   strict: false,                // 非严格模式
+ *   maxConditionDepth: 10         // 最大条件嵌套深度
+ * })
+ * 
+ * // 场景1：用户只能编辑自己的数据
+ * abac.addRule({
+ *   action: 'update',
+ *   subject: 'Document',
+ *   conditions: {
+ *     field: 'ownerId',
+ *     operator: 'eq',
+ *     value: '{{userId}}'
+ *   }
+ * })
+ * 
+ * // 场景2：工作时间限制
+ * abac.addRule({
+ *   action: '*',
+ *   subject: 'SensitiveData',
+ *   conditions: {
+ *     operator: 'and',
+ *     conditions: [
+ *       { field: 'environment.time.hour', operator: 'gte', value: 9 },
+ *       { field: 'environment.time.hour', operator: 'lt', value: 18 }
+ *     ]
+ *   }
+ * })
+ * ```
  */
 export class ABACEngine implements Ability {
-  /** 能力规则列表 */
+  /** 能力规则列表 - 所有已定义的 ABAC 规则 */
   public rules: AbilityRule[] = []
 
-  /** 条件求值器 */
+  /** 条件求值器 - 负责评估规则中的条件表达式 */
   private conditionEvaluator: ConditionEvaluator
 
-  /** 属性匹配器 */
+  /** 属性匹配器 - 负责属性的匹配和比较 */
   private attributeMatcher: AttributeMatcher
 
-  /** 上下文管理器 */
+  /** 上下文管理器 - 负责上下文的构建和管理 */
   private contextManager: ContextManager
 
-  /** 配置 */
+  /** 配置选项 */
   private config: Required<ABACConfig>
 
-  /** 字段权限映射 */
+  /** 字段权限映射 - 存储字段级别的访问控制规则 */
   private fieldPermissions: Map<string, FieldPermission> = new Map()
 
+  /**
+   * 创建 ABAC 引擎实例
+   * 
+   * @param config - 配置选项
+   * @param config.enableConditionCache - 是否启用条件评估缓存，默认 true
+   * @param config.enableAttributeCache - 是否启用属性计算缓存，默认 true
+   * @param config.strict - 是否启用严格模式，默认 false
+   *   - 严格模式：没有匹配规则时拒绝访问
+   *   - 非严格模式：没有匹配规则时允许访问
+   * @param config.maxConditionDepth - 最大条件嵌套深度，默认 10，防止递归过深
+   */
   constructor(config: ABACConfig = {}) {
     this.config = {
       enableConditionCache: config.enableConditionCache ?? true,

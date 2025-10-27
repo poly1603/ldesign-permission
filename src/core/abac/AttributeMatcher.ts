@@ -5,6 +5,7 @@
  */
 
 import type { Attribute, Context, AttributeMatcherConfig } from '../../types'
+import { getValueByPath } from '../../shared/utils'
 
 /**
  * 属性匹配器类
@@ -21,6 +22,9 @@ export class AttributeMatcher {
 
   /** 属性缓存 */
   private attributeCache: Map<string, any> = new Map()
+
+  /** 缓存最大容量 */
+  private readonly MAX_CACHE_SIZE = 1000
 
   constructor(config: AttributeMatcherConfig = {}) {
     this.config = {
@@ -80,13 +84,21 @@ export class AttributeMatcher {
       }
 
       const value = attribute.compute(context)
+
+      // 检查缓存大小限制
+      if (this.attributeCache.size >= this.MAX_CACHE_SIZE) {
+        // 删除最早的缓存项（FIFO）
+        const firstKey = this.attributeCache.keys().next().value
+        this.attributeCache.delete(firstKey)
+      }
+
       this.attributeCache.set(cacheKey, value)
 
       return value
     }
 
     // 静态属性 - 从上下文中获取
-    return this.getValueByPath(context, attribute.name)
+    return getValueByPath(context, attribute.name)
   }
 
   /**
@@ -193,22 +205,6 @@ export class AttributeMatcher {
     })
   }
 
-  /**
-   * 通过路径获取值
-   */
-  private getValueByPath(obj: any, path: string): any {
-    const keys = path.split('.')
-    let value = obj
-
-    for (const key of keys) {
-      if (value === null || value === undefined) {
-        return undefined
-      }
-      value = value[key]
-    }
-
-    return value
-  }
 
   /**
    * 批量匹配属性
