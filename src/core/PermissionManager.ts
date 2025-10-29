@@ -562,6 +562,7 @@ export class PermissionManager {
 
       return result
     }
+  }
 
   /**
    * 策略检查（私有辅助方法）
