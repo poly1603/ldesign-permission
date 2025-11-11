@@ -23,6 +23,11 @@
       "import": "./es/core/*.js",
       "require": "./lib/core/*.cjs"
     },
+    "./shared/*": {
+      "types": "./es/shared/*.d.ts",
+      "import": "./es/shared/*.js",
+      "require": "./lib/shared/*.cjs"
+    },
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",
@@ -44,8 +49,7 @@
     "LICENSE",
     "package.json",
     "es",
-    "lib",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "ldesign-builder build",
