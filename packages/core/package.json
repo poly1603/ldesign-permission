@@ -1,0 +1,122 @@
+{
+  "name": "@ldesign/permission-core",
+  "version": "0.1.0",
+  "description": "LDesign 权限系统核心模块 - 框架无关的权限管理、角色管理、策略引擎",
+  "keywords": [
+    "ldesign",
+    "permission",
+    "authorization",
+    "rbac",
+    "abac",
+    "policy",
+    "typescript",
+    "framework-agnostic"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs",
+      "default": "./es/index.js"
+    },
+    "./cache": {
+      "types": "./es/cache/index.d.ts",
+      "import": "./es/cache/index.js",
+      "require": "./lib/cache/index.cjs",
+      "default": "./es/cache/index.js"
+    },
+    "./cache/*": {
+      "types": "./es/cache/*.d.ts",
+      "import": "./es/cache/*.js",
+      "require": "./lib/cache/*.cjs",
+      "default": "./es/cache/*.js"
+    },
+    "./permission": {
+      "types": "./es/permission/index.d.ts",
+      "import": "./es/permission/index.js",
+      "require": "./lib/permission/index.cjs",
+      "default": "./es/permission/index.js"
+    },
+    "./permission/*": {
+      "types": "./es/permission/*.d.ts",
+      "import": "./es/permission/*.js",
+      "require": "./lib/permission/*.cjs",
+      "default": "./es/permission/*.js"
+    },
+    "./policy": {
+      "types": "./es/policy/index.d.ts",
+      "import": "./es/policy/index.js",
+      "require": "./lib/policy/index.cjs",
+      "default": "./es/policy/index.js"
+    },
+    "./policy/*": {
+      "types": "./es/policy/*.d.ts",
+      "import": "./es/policy/*.js",
+      "require": "./lib/policy/*.cjs",
+      "default": "./es/policy/*.js"
+    },
+    "./role": {
+      "types": "./es/role/index.d.ts",
+      "import": "./es/role/index.js",
+      "require": "./lib/role/index.cjs",
+      "default": "./es/role/index.js"
+    },
+    "./role/*": {
+      "types": "./es/role/*.d.ts",
+      "import": "./es/role/*.js",
+      "require": "./lib/role/*.cjs",
+      "default": "./es/role/*.js"
+    },
+    "./types": {
+      "types": "./es/types/index.d.ts",
+      "import": "./es/types/index.js",
+      "require": "./lib/types/index.cjs",
+      "default": "./es/types/index.js"
+    },
+    "./types/*": {
+      "types": "./es/types/*.d.ts",
+      "import": "./es/types/*.js",
+      "require": "./lib/types/*.cjs",
+      "default": "./es/types/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "es",
+    "lib",
+    "dist"
+  ],
+  "scripts": {
+    "build": "ldesign-builder build -f esm,cjs,dts",
+    "dev": "ldesign-builder build -f esm,cjs,dts --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "clean": "rimraf es lib coverage"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "devDependencies": {
+    "@ldesign/builder": "workspace:*",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
+  },
+  "typings": "./es/index.d.ts",
+  "browser": "./dist/index.js"
+}

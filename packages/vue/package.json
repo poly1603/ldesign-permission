@@ -1,0 +1,141 @@
+{
+  "name": "@ldesign/permission-vue",
+  "version": "0.1.0",
+  "description": "LDesign 权限系统 Vue 3 适配器 - 提供 Composables、指令和组件",
+  "keywords": [
+    "ldesign",
+    "permission",
+    "vue3",
+    "composables",
+    "directives",
+    "authorization",
+    "rbac",
+    "typescript"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs",
+      "default": "./es/index.js"
+    },
+    "./components": {
+      "types": "./es/components/index.d.ts",
+      "import": "./es/components/index.js",
+      "require": "./lib/components/index.cjs",
+      "default": "./es/components/index.js"
+    },
+    "./components/*": {
+      "types": "./es/components/*.d.ts",
+      "import": "./es/components/*.js",
+      "require": "./lib/components/*.cjs",
+      "default": "./es/components/*.js"
+    },
+    "./composables": {
+      "types": "./es/composables/index.d.ts",
+      "import": "./es/composables/index.js",
+      "require": "./lib/composables/index.cjs",
+      "default": "./es/composables/index.js"
+    },
+    "./composables/*": {
+      "types": "./es/composables/*.d.ts",
+      "import": "./es/composables/*.js",
+      "require": "./lib/composables/*.cjs",
+      "default": "./es/composables/*.js"
+    },
+    "./directives": {
+      "types": "./es/directives/index.d.ts",
+      "import": "./es/directives/index.js",
+      "require": "./lib/directives/index.cjs",
+      "default": "./es/directives/index.js"
+    },
+    "./directives/*": {
+      "types": "./es/directives/*.d.ts",
+      "import": "./es/directives/*.js",
+      "require": "./lib/directives/*.cjs",
+      "default": "./es/directives/*.js"
+    },
+    "./plugin": {
+      "types": "./es/plugin/index.d.ts",
+      "import": "./es/plugin/index.js",
+      "require": "./lib/plugin/index.cjs",
+      "default": "./es/plugin/index.js"
+    },
+    "./plugin/*": {
+      "types": "./es/plugin/*.d.ts",
+      "import": "./es/plugin/*.js",
+      "require": "./lib/plugin/*.cjs",
+      "default": "./es/plugin/*.js"
+    },
+    "./plugins": {
+      "types": "./es/plugins/index.d.ts",
+      "import": "./es/plugins/index.js",
+      "require": "./lib/plugins/index.cjs",
+      "default": "./es/plugins/index.js"
+    },
+    "./plugins/*": {
+      "types": "./es/plugins/*.d.ts",
+      "import": "./es/plugins/*.js",
+      "require": "./lib/plugins/*.cjs",
+      "default": "./es/plugins/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "es",
+    "lib",
+    "dist"
+  ],
+  "scripts": {
+    "build": "ldesign-builder build -f esm,cjs,dts",
+    "dev": "ldesign-builder build -f esm,cjs,dts --watch",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "clean": "rimraf es lib coverage"
+  },
+  "dependencies": {
+    "@ldesign/permission-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@ldesign/engine-core": "workspace:*",
+    "@ldesign/permission-core": "workspace:*",
+    "vue": "^3.3.0",
+    "vue-router": "^4.0.0"
+  },
+  "devDependencies": {
+    "@ldesign/builder": "workspace:*",
+    "@types/node": "^22.0.0",
+    "@vitejs/plugin-vue": "^5.0.3",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4",
+    "vue": "^3.4.38",
+    "vue-router": "^4.5.0",
+    "vue-tsc": "^2.1.10"
+  },
+  "peerDependenciesMeta": {
+    "@ldesign/engine-core": {
+      "optional": true
+    },
+    "vue-router": {
+      "optional": true
+    }
+  },
+  "typings": "./es/index.d.ts",
+  "browser": "./dist/index.js"
+}
